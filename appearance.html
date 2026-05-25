@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Appearance - THRILLING ANIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animation.css">
+  <link rel="stylesheet" href="../css/themes.css">
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <header class="app-header glass-strong">
+    <div class="app-header-inner">
+      <button class="p-2 rounded-xl hover:bg-white/5 transition-colors" onclick="history.back()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+      <h1 class="text-lg font-bold tracking-tight absolute left-1/2 -translate-x-1/2">Preferences</h1>
+      <div class="w-10"></div>
+    </div>
+  </header>
+
+  <div class="h-14"></div>
+
+  <div class="preferences-page">
+    <style>
+      .preferences-page { background: var(--bg-primary); min-height: 100%; transition: background 0.3s; position: relative; }
+      .page-header { display: flex; align-items: center; gap: 0.75rem; padding: 1rem; position: relative; z-index: 1; }
+      .page-header .back-btn { width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center; background: var(--bg-glass); border-radius: 50%; color: var(--text-primary); cursor: pointer; border: none; transition: background 0.2s; }
+      .page-header .back-btn:active { background: var(--bg-glass-hover); }
+      .page-header h2 { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); }
+      .sec-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; margin: 0 1rem 0.6rem; position: relative; z-index: 1; }
+
+      /* ===== CHARACTER THEME CARDS ===== */
+      .theme-wrap { padding: 0 1rem 1rem; position: relative; z-index: 1; }
+      .character-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+
+      @media (min-width: 640px) {
+        .character-grid { grid-template-columns: repeat(3, 1fr); }
+      }
+
+      .character-card {
+        position: relative;
+        border-radius: 1rem;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: transform 0.15s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        aspect-ratio: 3 / 4;
+      }
+
+      .character-card:active { transform: scale(0.96); }
+
+      .character-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* Selected - premium minimal */
+      .character-card.selected {
+        border: 2px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        transform: scale(1.01);
+      }
+
+      /* Checkmark - premium minimal */
+      .character-check {
+        position: absolute;
+        top: 0.6rem;
+        right: 0.6rem;
+        width: 1.4rem;
+        height: 1.4rem;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      }
+
+      .character-check svg {
+        width: 0.75rem;
+        height: 0.75rem;
+        color: #111;
+        stroke-width: 3;
+      }
+
+      /* ===== PREMIUM TOAST ===== */
+      .theme-toast {
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: rgba(15, 15, 20, 0.95);
+        color: white;
+        padding: 14px 28px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 1000;
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(255,255,255,0.08);
+        font-size: 14px;
+        font-weight: 500;
+        pointer-events: none;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+        letter-spacing: 0.02em;
+      }
+      .theme-toast.show { 
+        opacity: 1; 
+        transform: translateX(-50%) translateY(0); 
+      }
+      .theme-toast .toast-icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        stroke: var(--accent);
+        opacity: 0.9;
+      }
+      .theme-toast-text { 
+        font-size: 14px; 
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+
+      .group-card { background: var(--bg-glass); border: 1px solid var(--border-light); border-radius: 1.25rem; overflow: hidden; margin: 0 1rem 0.75rem; position: relative; z-index: 1; }
+      .t-row { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-bottom: 1px solid var(--border-subtle); }
+      .t-row:last-child { border-bottom: none; }
+      .t-row .t-icon { display: flex; align-items: center; justify-content: center; width: 2.2rem; height: 2.2rem; background: var(--accent-glow); border-radius: 0.625rem; margin-right: 0.5rem; }
+      .t-row .t-icon svg { width: 1.2rem; height: 1.2rem; color: var(--accent); }
+      .t-row .t-info { display: flex; flex-direction: column; gap: 0.2rem; }
+      .t-row .t-title { font-size: 0.9rem; color: var(--text-primary); font-weight: 500; }
+      .t-row .t-sub { font-size: 0.8rem; color: var(--text-muted); }
+      .t-switch { position: relative; width: 48px; height: 28px; }
+      .t-switch input { opacity: 0; width: 0; height: 0; }
+      .t-slider { position: absolute; top:0;left:0;right:0;bottom:0; background: var(--bg-glass-hover); border-radius: 28px; transition: 0.3s; }
+      .t-slider::before { content: ""; position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background: var(--text-primary); border-radius: 50%; transition: 0.3s; }
+      input:checked + .t-slider { background: var(--accent); }
+      input:checked + .t-slider::before { transform: translateX(20px); }
+      .lang-wrap { position: relative; margin: 0 1rem; z-index: 1; }
+      .lang-select { width: 100%; padding: 0.9rem 1rem; background: var(--bg-glass); border: 1px solid var(--border-light); border-radius: 1rem; color: var(--text-primary); font-size: 0.9rem; appearance: none; outline: none; cursor: pointer; }
+      .lang-select option { background: var(--bg-card); color: var(--text-primary); }
+      .lang-wrap svg { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; color: var(--text-muted); pointer-events: none; }
+    </style>
+
+    <div class="page-header">
+      <button class="back-btn" onclick="history.back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+      <h2>Preferences</h2>
+    </div>
+
+    <div class="sec-title">Anime Character Theme</div>
+    <div class="theme-wrap">
+      <div class="character-grid" id="character-grid">
+
+        <div class="character-card" data-theme="naruto" onclick="setCharacterTheme('naruto')">
+          <img src="../img/characters/naruto.png" alt="Naruto" loading="lazy">
+        </div>
+
+        <div class="character-card" data-theme="tanjiro" onclick="setCharacterTheme('tanjiro')">
+          <img src="../img/characters/tanjiro.png" alt="Tanjiro" loading="lazy">
+        </div>
+
+        <div class="character-card" data-theme="gojo" onclick="setCharacterTheme('gojo')">
+          <img src="../img/characters/gojo.png" alt="Gojo" loading="lazy">
+        </div>
+
+        <div class="character-card" data-theme="luffy" onclick="setCharacterTheme('luffy')">
+          <img src="../img/characters/luffy.png" alt="Luffy" loading="lazy">
+        </div>
+
+        <div class="character-card" data-theme="saitama" onclick="setCharacterTheme('saitama')">
+          <img src="../img/characters/saitama.png" alt="Saitama" loading="lazy">
+        </div>
+
+        <div class="character-card" data-theme="anya" onclick="setCharacterTheme('anya')">
+          <img src="../img/characters/anya.png" alt="Anya" loading="lazy">
+        </div>
+
+      </div>
+    </div>
+
+    <div class="sec-title">App Settings</div>
+    <div class="group-card">
+      <div class="t-row"><div style="display:flex;align-items:center;"><div class="t-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/></svg></div><div class="t-info"><span class="t-title">Show Tab Labels</span><span class="t-sub">Display labels in bottom nav</span></div></div><label class="t-switch"><input type="checkbox" id="toggle-tab-labels" onchange="savePrefSetting('tab_labels',this.checked);showToast(this.checked?'ON':'OFF');"><span class="t-slider"></span></label></div>
+      <div class="t-row"><div style="display:flex;align-items:center;"><div class="t-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/></svg></div><div class="t-info"><span class="t-title">Auto Check Updates</span><span class="t-sub">Check on startup</span></div></div><label class="t-switch"><input type="checkbox" id="toggle-pref-updates" onchange="savePrefSetting('auto_check_updates',this.checked);showToast(this.checked?'ON':'OFF');"><span class="t-slider"></span></label></div>
+      <div class="t-row"><div style="display:flex;align-items:center;"><div class="t-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4"/></svg></div><div class="t-info"><span class="t-title">Auto Download</span><span class="t-sub">Download updates auto</span></div></div><label class="t-switch"><input type="checkbox" id="toggle-pref-download" onchange="savePrefSetting('auto_download',this.checked);showToast(this.checked?'ON':'OFF');"><span class="t-slider"></span></label></div>
+    </div>
+
+    <div class="sec-title">Language</div>
+    <div class="lang-wrap">
+      <select class="lang-select" id="lang-select" onchange="localStorage.setItem('thrilling_lang', this.value); showToast('Language: ' + this.value.toUpperCase())"><option value="en">English</option><option value="hi">Hindi</option></select>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+
+    <div id="theme-toast" class="theme-toast">
+      <span class="theme-toast-text" id="toast-message">Theme Applied!</span>
+    </div>
+  </div>
+
+  <div class="h-20"></div>
+
+  <nav class="bottom-nav glass-strong">
+    <div class="bottom-nav-inner">
+      <button class="nav-item" onclick="goToPage('home')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Home</span>
+      </button>
+      <button class="nav-item" onclick="goToPage('search')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Search</span>
+      </button>
+      <button class="nav-item" onclick="goToPage('categories')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Categories</span>
+      </button>
+      <button class="nav-item active" onclick="goToPage('profile')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Profile</span>
+      </button>
+    </div>
+  </nav>
+
+  <script src="../js/theme-helper.js"></script>
+  <script src="../js/tmdb.js"></script>
+  <script src="../js/app-core.js"></script>
+  <script src="../js/themes.js"></script>
+  <script>
+    function savePrefSetting(key, value) {
+      localStorage.setItem('thrilling_' + key, value);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabLabels = localStorage.getItem('thrilling_tab_labels');
+      const autoCheck = localStorage.getItem('thrilling_auto_check_updates');
+      const autoDownload = localStorage.getItem('thrilling_auto_download');
+      const lang = localStorage.getItem('thrilling_lang');
+
+      if (tabLabels !== null) document.getElementById('toggle-tab-labels').checked = tabLabels === 'true';
+      if (autoCheck !== null) document.getElementById('toggle-pref-updates').checked = autoCheck === 'true';
+      if (autoDownload !== null) document.getElementById('toggle-pref-download').checked = autoDownload === 'true';
+      if (lang) document.getElementById('lang-select').value = lang;
+    });
+  </script>
+</body>
+</html>

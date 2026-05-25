@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Login - THRILLING ANIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animation.css">
+  <link rel="stylesheet" href="../css/themes.css">
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <div class="login-container">
+    <div class="login-box fade-in-up">
+      <div class="flex flex-col items-center gap-2 mb-8">
+        <div class="w-14 h-14 rounded-xl bg-accent flex items-center justify-center shadow-accent mb-2">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <h1 class="text-xl font-bold">Welcome Back</h1>
+        <p class="text-sm text-white/50">Sign in to continue watching</p>
+      </div>
+
+      <form id="login-form" class="flex flex-col gap-4" onsubmit="handleLogin(event)">
+        <div>
+          <label class="text-xs text-white/50 mb-1.5 block">Email or Username</label>
+          <input type="text" id="login-email" class="form-input" placeholder="Enter email" required>
+        </div>
+        <div>
+          <label class="text-xs text-white/50 mb-1.5 block">Password</label>
+          <input type="password" id="login-password" class="form-input" placeholder="Enter password" required>
+        </div>
+        <button type="submit" class="btn-primary justify-center w-full mt-2">
+          Sign In
+        </button>
+      </form>
+
+      <div class="flex items-center gap-4 my-6">
+        <div class="flex-1 h-px bg-white/10"></div>
+        <span class="text-xs text-white/40">or</span>
+        <div class="flex-1 h-px bg-white/10"></div>
+      </div>
+
+      <button onclick="guestLogin()" class="btn-secondary justify-center w-full">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        Continue as Guest
+      </button>
+
+      <p class="text-xs text-center text-white/40 mt-6">
+        Don't have an account? <a href="#" class="text-accent hover:underline">Sign up</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="../js/tmdb.js"></script>
+  <script src="../js/theme-helper.js"></script>
+  <script src="../js/app-core.js"></script>
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      localStorage.setItem('thrilling_user', JSON.stringify({ email, name: email.split('@')[0] }));
+      showToast('Welcome back!');
+      setTimeout(() => {
+        window.location.href = './home.html';
+      }, 800);
+    }
+
+    function guestLogin() {
+      localStorage.setItem('thrilling_user', JSON.stringify({ email: 'guest', name: 'Guest User' }));
+      showToast('Welcome Guest!');
+      setTimeout(() => {
+        window.location.href = './home.html';
+      }, 800);
+    }
+  </script>
+</body>
+</html>

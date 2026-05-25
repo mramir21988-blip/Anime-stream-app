@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>THRILLING ANIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animation.css">
+  <style>
+    /* ===== HEADER — TRANSPARENT OVER HERO ===== */
+    .app-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      padding: 10px 16px;
+      background: transparent !important;
+      border-bottom: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform, background;
+    }
+    .app-header.hidden {
+      transform: translateY(-100%);
+    }
+    .app-header.scrolled {
+      background: rgba(11, 11, 15, 0.92) !important;
+      backdrop-filter: blur(30px) !important;
+      -webkit-backdrop-filter: blur(30px) !important;
+      border-bottom: 1px solid var(--border-card) !important;
+    }
+    .app-header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* ===== HERO — PREMIUM FULL BLEED ===== */
+    .hero-section {
+      position: relative;
+      width: 100%;
+      height: 420px;
+      border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+      overflow: hidden;
+      margin-top: -56px;
+      padding-top: 56px;
+    }
+    .hero-section::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 120px rgba(0,0,0,0.5);
+      z-index: 6;
+      pointer-events: none;
+    }
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: opacity;
+    }
+    .hero-slide.active {
+      opacity: 1;
+      z-index: 2;
+    }
+    .hero-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transform: scale(1.08);
+      transition: transform 6s ease-out;
+    }
+    .hero-slide.active img {
+      transform: scale(1);
+    }
+    /* Top gradient — smooth header merge */
+    .hero-gradient-top {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, 
+        var(--bg-primary) 0%,
+        rgba(11,11,15,0.9) 5%,
+        rgba(11,11,15,0.7) 12%,
+        rgba(11,11,15,0.4) 22%,
+        rgba(11,11,15,0.1) 35%,
+        transparent 50%
+      );
+      z-index: 5;
+      pointer-events: none;
+    }
+    /* Bottom gradient */
+    .hero-gradient-bottom {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, 
+        var(--bg-primary) 0%, 
+        rgba(11,11,15,0.95) 15%, 
+        rgba(11,11,15,0.7) 35%, 
+        rgba(11,11,15,0.3) 55%, 
+        transparent 75%
+      );
+      z-index: 5;
+      pointer-events: none;
+    }
+    .hero-arrow {
+      position: absolute;
+      top: 45%;
+      transform: translateY(-50%) scale(0.9);
+      z-index: 20;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.3s ease;
+      will-change: transform, opacity;
+    }
+    .hero-section:hover .hero-arrow {
+      opacity: 0.7;
+      transform: translateY(-50%) scale(1);
+    }
+    .hero-arrow:hover {
+      background: var(--accent);
+      color: black;
+      opacity: 1 !important;
+    }
+    .hero-arrow:active {
+      transform: translateY(-50%) scale(0.9) !important;
+    }
+    .hero-arrow-left { left: 12px; }
+    .hero-arrow-right { right: 12px; }
+
+    .hero-dots {
+      position: absolute;
+      bottom: 4px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      z-index: 10;
+    }
+    .hero-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .hero-dot.active {
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
+      transform: scale(1.3);
+      width: 6px;
+      border-radius: 3px;
+    }
+
+    /* Hero Content — Compact & Premium */
+    .hero-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 16px 20px;
+      z-index: 10;
+    }
+    .hero-genre-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 7px;
+      border-radius: 7px;
+      font-size: 07px;
+      font-weight: 900;
+      background: var(--accent);
+      color: black;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 10px var(--accent-glow);
+    }
+    .hero-title {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+    }
+    .hero-desc {
+      font-size: 9px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.4;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-shadow: 0 1px 10px rgba(0,0,0,0.5);
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-watch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--accent);
+      color: black;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    .btn-watch:hover, .btn-watch:active {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px var(--accent-glow);
+    }
+    .btn-save {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    .btn-save:hover, .btn-save:active {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.3);
+    }
+
+    /* ===== CARDS ===== */
+    .anime-card {
+      contain: layout style paint;
+      will-change: transform;
+      flex-shrink: 0;
+      width: 124px;
+      cursor: pointer;
+    }
+    .anime-card .poster {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-md);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s ease;
+      aspect-ratio: 3/4;
+    }
+    .anime-card:hover .poster,
+    .anime-card:active .poster {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .anime-card .poster::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 55%, transparent 60%);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+      pointer-events: none;
+    }
+    .anime-card:hover .poster::after {
+      transform: translateX(100%);
+    }
+    .anime-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .anime-card:hover img {
+      transform: scale(1.08);
+    }
+    .anime-card .title {
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 5px;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .anime-card .meta {
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 1px;
+    }
+
+    /* Rating Badge */
+    .rating-badge {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      color: #FFD700;
+      border: 1px solid rgba(255,215,0,0.2);
+    }
+    .hindi-badge {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      background: linear-gradient(135deg, #FF6600, #FF8533);
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 8px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: 0.3px;
+    }
+
+    /* ===== SECTIONS ===== */
+    .section-row {
+      padding: 14px 0;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding: 0 16px;
+    }
+    .section-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      position: relative;
+      padding-left: 10px;
+    }
+    .section-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 2px;
+      box-shadow: 0 0 6px var(--accent-glow);
+    }
+    .section-subtitle {
+      font-size: 10px;
+      color: rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.05);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .see-all-btn {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.35);
+      transition: all 0.3s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .see-all-btn:hover, .see-all-btn:active {
+      color: var(--accent);
+      gap: 4px;
+    }
+    .see-all-btn svg {
+      transition: transform 0.3s ease;
+    }
+    .see-all-btn:hover svg,
+    .see-all-btn:active svg {
+      transform: translateX(3px);
+    }
+
+    .cards-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 0 16px;
+      scrollbar-width: none;
+    }
+    .cards-scroll::-webkit-scrollbar { display: none; }
+
+    /* ===== SKELETON ===== */
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-md);
+    }
+    .skeleton-text {
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 3px;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* ===== CARD ENTRANCE ===== */
+    .card-entrance {
+      opacity: 0;
+      transform: translateY(16px) scale(0.97);
+      transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-entrance.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* ===== ENDLESS LOADER ===== */
+    .endless-loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .endless-loader.visible {
+      opacity: 1;
+    }
+    .endless-loader .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .endless-loader span {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      padding: 8px 16px 12px;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+    .bottom-nav.hidden {
+      transform: translateY(100%);
+    }
+    .bottom-nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .nav-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 12px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+    }
+    .nav-item.active {
+      background: rgba(255,255,255,0.05);
+    }
+    .nav-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    .nav-item svg {
+      transition: all 0.3s ease;
+    }
+    .nav-item.active svg {
+      stroke: var(--accent);
+      filter: drop-shadow(0 0 6px var(--accent-glow));
+    }
+    .nav-item span {
+      font-size: 10px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .nav-item.active span {
+      color: var(--accent);
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: var(--bg-secondary);
+      border: 1px solid var(--accent);
+      color: var(--text-primary);
+      padding: 12px 24px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 30px var(--accent-glow), 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 900;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    /* ===== RIPPLE ===== */
+    .ripple {
+      position: relative;
+      overflow: hidden;
+    }
+    .ripple::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+      transform: scale(0);
+      opacity: 0;
+      transition: transform 0s, opacity 0.4s ease;
+    }
+    .ripple:active::after {
+      transform: scale(2.5);
+      opacity: 1;
+      transition: transform 0.4s ease, opacity 0.3s ease;
+    }
+
+    /* ===== REDUCED MOTION ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <!-- Header — Transparent over hero -->
+  <header class="app-header" id="app-header">
+    <div class="app-header-inner">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-md bg-accent flex items-center justify-center shadow-accent">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <h1 class="text-base font-bold tracking-tight">THRILLING ANIME</h1>
+      </div>
+      <!-- SEARCH ICON -->
+      <button class="p-2 rounded-xl hover:bg-white/5 transition-colors ripple" onclick="goToPage('search')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section — Full bleed premium -->
+  <section class="hero-section" id="hero-section">
+    <div id="hero-container" class="relative w-full h-full overflow-hidden">
+      <!-- Slides injected by JS -->
+    </div>
+
+    <button class="hero-arrow hero-arrow-left" onclick="prevHeroSlide(); resetHeroAutoRotate();" aria-label="Previous">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"></path>
+      </svg>
+    </button>
+    <button class="hero-arrow hero-arrow-right" onclick="nextHeroSlide(); resetHeroAutoRotate();" aria-label="Next">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18l6-6-6-6"></path>
+      </svg>
+    </button>
+
+    <!-- Top gradient — smooth header merge -->
+    <div class="hero-gradient-top"></div>
+    <!-- Bottom gradient -->
+    <div class="hero-gradient-bottom"></div>
+
+    <div class="hero-content">
+      <div class="max-w-lg mx-auto">
+        <div id="hero-text-wrap">
+          <span id="hero-genre" class="hero-genre-tag">Loading...</span>
+          <h2 id="hero-title" class="hero-title">Loading Anime...</h2>
+          <p id="hero-desc" class="hero-desc">Fetching the best anime for you...</p>
+          <div class="hero-actions">
+            <button onclick="watchCurrentHero()" class="btn-watch ripple">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              Watch Now
+            </button>
+            <button class="btn-save ripple" onclick="showToast('Added to Watchlist')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-dots" id="hero-dots"></div>
+  </section>
+
+  <!-- Dynamic Sections Container -->
+  <div id="sections-container"></div>
+
+  <!-- Endless Scroll Loader -->
+  <div class="endless-loader" id="endless-loader">
+    <div class="spinner"></div>
+    <span>Loading more...</span>
+  </div>
+
+  <!-- Spacer -->
+  <div class="h-24"></div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav glass-strong" id="bottom-nav">
+    <div class="bottom-nav-inner">
+      <button class="nav-item active" data-page="home" onclick="goToPage('home')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10"></path>
+        </svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" data-page="search" onclick="goToPage('search')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <span>Search</span>
+      </button>
+      <button class="nav-item" data-page="categories" onclick="goToPage('categories')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <span>Categories</span>
+      </button>
+      <button class="nav-item" data-page="profile" onclick="goToPage('profile')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path>
+        </svg>
+        <span>Profile</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Player Modal -->
+  <div id="player-modal" class="modal-overlay" onclick="closePlayerModal(event)">
+    <div class="w-full max-w-lg bg-[#12121A] rounded-2xl overflow-hidden border border-white/10" onclick="event.stopPropagation()">
+      <div class="relative bg-black" style="aspect-ratio: 16/9;">
+        <img src="https://placehold.co/800x450/0a0a0a/333333?text=Video+Player" alt="Player" class="w-full h-full object-cover opacity-60">
+        <div class="absolute inset-0 flex items-center justify-center">
+          <button id="play-btn" onclick="togglePlay()" class="w-16 h-16 rounded-full bg-accent flex items-center justify-center shadow-accent">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="black" stroke="none">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </button>
+        </div>
+        <div class="absolute top-3 right-3">
+          <button onclick="closePlayerModalDirect()" class="p-2 rounded-full bg-black/50 text-white/70 hover:text-white">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+          <div class="flex items-center gap-3 mb-2">
+            <button onclick="skipBackward()" class="p-1.5 text-white/70 hover:text-white">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20L9 12l10-8v16zM5 19h2V5H5v14z"/></svg>
+            </button>
+            <button onclick="togglePlay()" class="p-1.5 text-white hover:text-accent">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </button>
+            <button onclick="skipForward()" class="p-1.5 text-white/70 hover:text-white">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4l10 8-10 8V4zM19 5h-2v14h2V5z"/></svg>
+            </button>
+            <span id="time-current" class="text-xs text-white/60 ml-auto">0:00</span>
+            <span class="text-xs text-white/40">/</span>
+            <span id="time-total" class="text-xs text-white/60">24:00</span>
+          </div>
+          <input type="range" id="seek-bar" class="seek-bar" min="0" max="100" value="30" oninput="seekVideo(this.value)">
+        </div>
+      </div>
+      <div class="p-4">
+        <h3 class="font-bold mb-1">Now Playing</h3>
+        <p class="text-sm text-white/60 mb-3">Episode 1 · Subbed</p>
+        <div class="flex gap-2">
+          <button class="btn-primary text-xs flex-1 justify-center">Next Episode</button>
+          <button class="btn-secondary text-xs flex-1 justify-center" onclick="closePlayerModalDirect()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/theme-helper.js"></script>
+<script src="../js/cache-manager.js"></script>
+<script src="../js/anime-api.js"></script>
+<script src="../js/tmdb.js"></script>
+  <script src="../js/app-core.js"></script>
+  <script src="../js/app-home.js"></script>
+  <script src="../js/app-player.js"></script>
+</body>
+</html>

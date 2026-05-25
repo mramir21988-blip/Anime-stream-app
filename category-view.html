@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>THRILLING ANIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animation.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <style>
+    /* ===== CATEGORY VIEW STYLES ===== */
+    .category-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      padding: 12px 16px;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+    .category-header.hidden {
+      transform: translateY(-100%);
+    }
+    .category-header-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .back-btn:hover, .back-btn:active {
+      background: var(--accent);
+      color: black;
+      border-color: var(--accent);
+    }
+
+    /* ===== SEARCH BAR ===== */
+    .category-search-wrap {
+      position: relative;
+      padding: 0 16px 10px;
+    }
+    .category-search-input {
+      width: 100%;
+      padding: 10px 36px 10px 40px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    .category-search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .category-search-wrap .search-icon {
+      position: absolute;
+      left: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .category-search-wrap .clear-btn {
+      position: absolute;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: var(--text-muted);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 10px;
+      transition: all 0.2s ease;
+    }
+    .category-search-wrap .clear-btn.visible {
+      display: flex;
+    }
+    .category-search-wrap .clear-btn:active {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-50%) scale(0.9);
+    }
+
+    /* ===== FILTER BAR ===== */
+    .filter-bar {
+      position: sticky;
+      top: 56px;
+      z-index: 40;
+      padding: 8px 16px;
+      background: linear-gradient(to bottom, var(--bg-primary) 80%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .filter-bar-inner {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .filter-bar-inner::-webkit-scrollbar { display: none; }
+    .filter-pill {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      scroll-snap-align: start;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .filter-pill:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .filter-pill.active {
+      background: var(--accent);
+      color: var(--text-inverse);
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    .filter-pill:active {
+      transform: scale(0.95);
+    }
+
+    /* ===== GRID LAYOUT ===== */
+    .anime-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 0 16px;
+      content-visibility: auto;
+    }
+    @media (min-width: 480px) {
+      .anime-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 640px) {
+      .anime-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    }
+    @media (min-width: 1024px) {
+      .anime-grid { grid-template-columns: repeat(5, 1fr); }
+    }
+
+    /* Grid Card */
+    .grid-card {
+      contain: layout style paint;
+      will-change: transform;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px) scale(0.96);
+      transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      content-visibility: auto;
+      contain-intrinsic-size: 0 220px;
+    }
+    .grid-card.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .grid-card .poster {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-md);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s ease;
+      aspect-ratio: 3/4;
+      background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
+    }
+    .grid-card:hover .poster,
+    .grid-card:active .poster {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .grid-card .poster::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 55%, transparent 60%);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+      pointer-events: none;
+    }
+    .grid-card:hover .poster::after {
+      transform: translateX(100%);
+    }
+    .grid-card .poster img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease, opacity 0.3s ease, filter 0.4s ease;
+      opacity: 0;
+      filter: blur(8px);
+      transform: scale(1.05);
+    }
+    .grid-card .poster img.loaded {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(1);
+    }
+    .grid-card:hover .poster img {
+      transform: scale(1.08);
+    }
+    .grid-card .title {
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 6px;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      color: var(--text-primary);
+    }
+    .grid-card .meta {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Rating Badge */
+    .rating-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      padding: 3px 6px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #FFD700;
+      border: 1px solid rgba(255,215,0,0.3);
+      z-index: 3;
+    }
+    .hindi-badge-grid {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: linear-gradient(135deg, #FF6600, #FF8533);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: 0.5px;
+      z-index: 3;
+    }
+    .genre-badge-grid {
+      position: absolute;
+      bottom: 6px;
+      left: 6px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--accent);
+      border: 1px solid rgba(255,255,255,0.1);
+      z-index: 3;
+    }
+
+    /* Infinite Scroll Loader */
+    .infinite-loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .infinite-loader.visible {
+      opacity: 1;
+    }
+    .infinite-loader .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .infinite-loader span {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Skeleton Grid */
+    .skeleton-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 0 16px;
+    }
+    @media (min-width: 640px) {
+      .skeleton-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    }
+    .skeleton-card {
+      contain: layout style paint;
+    }
+    .skeleton-card .skeleton-poster {
+      aspect-ratio: 3/4;
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-md);
+      margin-bottom: 8px;
+    }
+    .skeleton-card .skeleton-text {
+      height: 12px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+    .skeleton-card .skeleton-text.short { width: 60%; }
+
+    /* Empty State */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      text-align: center;
+    }
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .empty-state h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .empty-state p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 280px;
+    }
+    .retry-btn {
+      margin-top: 16px;
+      padding: 10px 24px;
+      border-radius: var(--radius-md);
+      background: var(--accent);
+      color: var(--text-inverse);
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      box-shadow: var(--shadow-accent);
+      transition: all 0.2s ease;
+    }
+    .retry-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: var(--bg-secondary);
+      border: 1px solid var(--accent);
+      color: var(--text-primary);
+      padding: 12px 24px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 30px var(--accent-glow), 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Pull to refresh hint */
+    .pull-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .pull-hint.visible {
+      opacity: 1;
+    }
+    .pull-hint svg {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.3s ease;
+    }
+    .pull-hint.spinning svg {
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ===== BACK TO TOP ===== */
+    .back-to-top {
+      position: fixed;
+      bottom: 88px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--text-inverse);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 90;
+      opacity: 0;
+      transform: translateY(20px) scale(0.8);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 20px var(--accent-glow);
+      pointer-events: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    .back-to-top:active {
+      transform: scale(0.9);
+    }
+
+    /* ===== RESULTS COUNT ===== */
+    .results-count {
+      padding: 0 16px 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <!-- Header -->
+  <header class="category-header glass-strong" id="category-header">
+    <div class="category-header-inner">
+      <button class="back-btn ripple" id="back-btn" onclick="history.back()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h1 class="text-lg font-bold tracking-tight truncate" id="category-title">Category</h1>
+      <div class="w-9"></div>
+    </div>
+  </header>
+
+  <div class="h-14"></div>
+
+  <!-- Pull to refresh hint -->
+  <div class="pull-hint" id="pull-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+    <span id="pull-text">Pull down to refresh</span>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="category-search-wrap">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+    <input type="text" class="category-search-input" id="category-search" placeholder="Search anime..." autocomplete="off" autocorrect="off" autocapitalize="off">
+    <button class="clear-btn" id="clear-search">✕</button>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar" id="filter-bar" style="display: none;">
+    <div class="filter-bar-inner">
+      <button class="filter-pill active" data-sort="popularity" onclick="setSort('popularity')">Popular</button>
+      <button class="filter-pill" data-sort="newest" onclick="setSort('newest')">Newest</button>
+      <button class="filter-pill" data-sort="rating" onclick="setSort('rating')">Rating</button>
+      <button class="filter-pill" data-sort="az" onclick="setSort('az')">A-Z</button>
+    </div>
+  </div>
+
+  <!-- Results Count -->
+  <div class="results-count" id="results-count" style="display:none;"></div>
+
+  <!-- Skeleton Loading -->
+  <div class="skeleton-grid" id="skeleton-grid">
+    <div class="skeleton-card"><div class="skeleton-poster"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
+    <div class="skeleton-card"><div class="skeleton-poster"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
+    <div class="skeleton-card"><div class="skeleton-poster"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
+    <div class="skeleton-card"><div class="skeleton-poster"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
+    <div class="skeleton-card"><div class="skeleton-poster"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
+    <div class="skeleton-card"><div class="skeleton-poster"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
+  </div>
+
+  <!-- Anime Grid -->
+  <div class="anime-grid" id="anime-grid" style="display: none;"></div>
+
+  <!-- Infinite Scroll Loader -->
+  <div class="infinite-loader" id="infinite-loader">
+    <div class="spinner"></div>
+    <span>Loading more...</span>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" id="empty-state" style="display: none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+    </svg>
+    <h3>No anime found</h3>
+    <p id="empty-msg">Try checking your connection or come back later.</p>
+    <button class="retry-btn" onclick="retryLoad()">Try Again</button>
+  </div>
+
+  <!-- Spacer for bottom nav -->
+  <div class="h-24"></div>
+
+  <!-- Back to Top -->
+  <button class="back-to-top" id="back-to-top" aria-label="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav glass-strong" id="bottom-nav">
+    <div class="bottom-nav-inner">
+      <button class="nav-item" onclick="goToPage('home')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Home</span>
+      </button>
+      <button class="nav-item" onclick="goToPage('search')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Search</span>
+      </button>
+      <button class="nav-item" onclick="goToPage('categories')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Categories</span>
+      </button>
+      <button class="nav-item" onclick="goToPage('profile')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Profile</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Scripts: ORDER MATTERS -->
+  <script src="../js/cache-manager.js"></script>
+  <script src="../js/anime-api.js"></script>
+  <script src="../js/tmdb.js"></script>
+  <script src="../js/theme-helper.js"></script>
+  <script src="../js/app-core.js"></script>
+  <script src="../js/app-category.js"></script>
+</body>
+</html>

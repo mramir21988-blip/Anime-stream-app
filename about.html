@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>About - THRILLING ANIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animation.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/profile-improvements.css">
+  <style>
+    .ab-header-title { font-size:28px; font-weight:800; color:var(--text-primary); letter-spacing:-0.5px; }
+    .ab-header-sub { font-size:14px; color:var(--text-muted); margin-top:4px; }
+    .ab-card { background:var(--bg-card); border:1px solid var(--border-card); border-radius:16px; overflow:hidden; }
+    .ab-item { display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid var(--border-card); }
+    .ab-item:last-child { border-bottom:none; }
+    .ab-item-left { display:flex; align-items:center; gap:12px; }
+    .ab-item-icon { width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,0.04); display:flex; align-items:center; justify-content:center; color:var(--accent); }
+    .ab-item-text { font-size:15px; font-weight:600; color:var(--text-primary); }
+    .ab-item-sub { font-size:12px; color:var(--text-muted); margin-top:2px; }
+    .ab-item-right { display:flex; align-items:center; gap:8px; }
+    .ab-value { font-size:14px; color:var(--text-muted); font-weight:500; }
+    .ab-toggle { position:relative; width:48px; height:26px; }
+    .ab-toggle input { opacity:0; width:0; height:0; }
+    .ab-toggle-slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.1); border-radius:26px; transition:0.3s; }
+    .ab-toggle-slider::before { position:absolute; content:""; height:20px; width:20px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:0.3s; box-shadow:0 2px 6px rgba(0,0,0,0.3); }
+    .ab-toggle input:checked + .ab-toggle-slider { background:var(--accent); }
+    .ab-toggle input:checked + .ab-toggle-slider::before { transform:translateX(22px); }
+    .ab-section-title { font-size:18px; font-weight:700; color:var(--text-primary); margin:24px 0 12px; }
+    .ab-update-btn { display:flex; align-items:center; gap:12px; padding:16px 18px; cursor:pointer; transition:background 0.15s; }
+    .ab-update-btn:active { background:var(--bg-hover); }
+    .ab-update-icon { width:40px; height:40px; border-radius:12px; background:rgba(0,212,255,0.1); display:flex; align-items:center; justify-content:center; color:var(--accent); }
+    .ab-update-text { font-size:15px; font-weight:600; color:var(--text-primary); }
+    .ab-update-sub { font-size:12px; color:var(--text-muted); }
+    .ab-chevron { color:var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <header class="app-header glass-strong">
+    <div class="app-header-inner">
+      <button class="p-2 rounded-xl hover:bg-white/5 transition-colors" onclick="history.back()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <h1 class="text-lg font-bold tracking-tight">About</h1>
+      <div class="w-10"></div>
+    </div>
+  </header>
+
+  <div class="h-14"></div>
+
+  <div class="page-container px-4 pt-6 pb-8">
+
+    <div class="mb-6">
+      <h2 class="ab-header-title">About</h2>
+      <p class="ab-header-sub">App information and updates</p>
+    </div>
+
+    <!-- Current Version -->
+    <div class="ab-card mb-6">
+      <div class="ab-item">
+        <span class="ab-item-text">Current Version</span>
+        <span class="ab-value">v1.0.0</span>
+      </div>
+    </div>
+
+    <!-- App Settings -->
+    <h3 class="ab-section-title">App Settings</h3>
+    <div class="ab-card mb-6">
+      <div class="ab-item">
+        <div class="ab-item-left">
+          <div class="ab-item-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <div>
+            <div class="ab-item-text">Auto Install Updates</div>
+            <div class="ab-item-sub">Automatically download and install new updates when available</div>
+          </div>
+        </div>
+        <label class="ab-toggle">
+          <input type="checkbox" id="auto-install" onchange="saveAppSetting('auto_install', this.checked)">
+          <span class="ab-toggle-slider"></span>
+        </label>
+      </div>
+      <div class="ab-item">
+        <div class="ab-item-left">
+          <div class="ab-item-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          </div>
+          <div>
+            <div class="ab-item-text">Check on Startup</div>
+            <div class="ab-item-sub">Look for updates when app launches</div>
+          </div>
+        </div>
+        <label class="ab-toggle">
+          <input type="checkbox" id="check-startup" onchange="saveAppSetting('check_startup', this.checked)">
+          <span class="ab-toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Updates -->
+    <h3 class="ab-section-title">Updates</h3>
+    <div class="ab-card mb-6">
+      <div class="ab-update-btn" onclick="checkForUpdates()">
+        <div class="ab-update-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div class="ab-update-text">Check for Updates</div>
+          <div class="ab-update-sub">Look for new versions</div>
+        </div>
+        <svg class="ab-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+
+    <!-- Legal Links -->
+    <h3 class="ab-section-title">Legal</h3>
+    <div class="ab-card mb-6">
+      <div class="ab-item" onclick="goToPage('dmca')">
+        <div class="ab-item-left">
+          <div class="ab-item-icon" style="color:#FF6600;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="ab-item-text">DMCA & Legal</span>
+        </div>
+        <svg class="ab-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="ab-item" onclick="goToPage('privacy')">
+        <div class="ab-item-left">
+          <div class="ab-item-icon" style="color:#4ade80;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <span class="ab-item-text">Privacy Policy</span>
+        </div>
+        <svg class="ab-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="h-20"></div>
+
+  <script src="../js/theme-helper.js"></script>
+  <script src="../js/app-core.js"></script>
+  <script>
+    function saveAppSetting(key, value) {
+      localStorage.setItem('thrilling_' + key, value);
+      showToast(key.replace('_', ' ') + ' updated');
+    }
+
+    function checkForUpdates() {
+      showToast('Checking for updates...');
+      setTimeout(() => {
+        showToast('You are on the latest version!');
+      }, 1500);
+    }
+
+    // Load saved settings
+    document.addEventListener('DOMContentLoaded', () => {
+      const autoInstall = localStorage.getItem('thrilling_auto_install');
+      const checkStartup = localStorage.getItem('thrilling_check_startup');
+      if (autoInstall !== null) document.getElementById('auto-install').checked = autoInstall === 'true';
+      if (checkStartup !== null) document.getElementById('check-startup').checked = checkStartup === 'true';
+    });
+  </script>
+</body>
+</html>

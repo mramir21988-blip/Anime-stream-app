@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Player - THRILLING ANIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animation.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <style>
+    /* ===== IFRAME FULLSCREEN MODES ===== */
+
+    /* Mode 1: Real browser fullscreen (via API) */
+    .player-box:fullscreen,
+    .player-box:-webkit-full-screen,
+    .player-box:-moz-full-screen {
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      aspect-ratio: auto !important;
+    }
+
+    /* Mode 2: CSS pseudo-fullscreen (mobile fallback) */
+    .player-box.iframe-fullscreen {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 9999 !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      aspect-ratio: auto !important;
+    }
+
+    .player-box.iframe-fullscreen #screenscape-container {
+      border-radius: 0 !important;
+    }
+
+    .player-box.iframe-fullscreen #screenscape-container iframe {
+      border-radius: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+    }
+
+    /* Hide native elements in iframe fullscreen */
+    .player-box.iframe-fullscreen .player-bg,
+    .player-box.iframe-fullscreen .player-bg-overlay,
+    .player-box.iframe-fullscreen #video,
+    .player-box.iframe-fullscreen #big-play-wrap,
+    .player-box.iframe-fullscreen .loader-ring,
+    .player-box.iframe-fullscreen .skip-pill,
+    .player-box.iframe-fullscreen .next-overlay,
+    .player-box.iframe-fullscreen .controls-layer {
+      display: none !important;
+    }
+
+    /* Exit fullscreen button */
+    #iframe-exit-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 10000;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    #iframe-exit-btn:active {
+      transform: scale(0.95);
+      background: rgba(0,0,0,0.9);
+    }
+
+    #iframe-exit-btn.visible {
+      display: flex;
+    }
+
+    /* Screenscape container base styles */
+    #screenscape-container {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: none;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    #screenscape-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 12px;
+      display: block;
+    }
+
+    /* Loading state for screenscape */
+    #screenscape-container.loading::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: #0a0a0a;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #screenscape-container.loading::after {
+      content: "Loading...";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 14px;
+      z-index: 6;
+    }
+  </style>
+</head>
+<body>
+  <div class="mesh-bg"></div>
+
+  <div id="toast" class="toast"><span style="color:var(--player-accent)">&#9679;</span><span id="toast-msg">Notification</span></div>
+
+  <header class="app-header glass-strong">
+    <div class="app-header-inner">
+      <button class="p-2 rounded-xl hover:bg-white/5 transition-colors mr-2" onclick="history.back()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>
+      </button>
+      <h1 class="text-lg font-bold tracking-tight line-clamp-1" id="player-title">Now Playing</h1>
+      <div class="w-10"></div>
+    </div>
+  </header>
+
+  <div class="h-14"></div>
+
+  <div id="standalone-player" class="page-container fade-in-up">
+
+    <div class="px-4 mb-3 fade-in">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-[11px] font-semibold text-white/30 uppercase tracking-wider">Servers</span>
+      </div>
+      <div class="srv-row hide-scrollbar">
+        <button class="srv-btn on" data-srv="vidstream" onclick="pickServer(this)">Vidstream<span class="srv-dot g"></span></button>
+        <button class="srv-btn" data-srv="mycloud" onclick="pickServer(this)">MyCloud<span class="srv-dot y"></span></button>
+        <button class="srv-btn" data-srv="filemoon" onclick="pickServer(this)">Filemoon<span class="srv-dot g"></span></button>
+        <button class="srv-btn" data-srv="streamsb" onclick="pickServer(this)">StreamSB<span class="srv-dot r"></span></button>
+        <button class="srv-btn" data-srv="screenscape" onclick="pickServer(this)">Screenscape<span class="srv-dot g"></span></button>
+      </div>
+    </div>
+
+    <div class="player-box mb-4 mx-4 fade-in stagger-1" id="player-box" style="aspect-ratio:16/9;">
+      <div class="player-bg" id="player-bg"></div>
+      <div class="player-bg-overlay"></div>
+
+      <video id="video" class="w-full h-full object-cover relative z-[2]" poster="https://placehold.co/800x450/0a0a0a/333333?text=Video+Player" preload="metadata" playsinline>
+        <source src="" type="video/mp4">
+        <track kind="subtitles" src="" srclang="en" label="English" default>
+      </video>
+
+      <div id="screenscape-container"></div>
+
+      <div class="absolute inset-0 flex items-center justify-center z-[3]" id="big-play-wrap">
+        <button id="big-play-btn" onclick="togglePlay()" class="big-play-btn card-tap">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="black" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </button>
+      </div>
+
+      <div class="loader-ring z-[4]" id="loader" style="display:none;">
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3"/>
+          <circle cx="22" cy="22" r="18" fill="none" stroke="var(--player-accent)" stroke-width="3" stroke-dasharray="70" stroke-dashoffset="18" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <button class="skip-pill z-[5]" id="skip-intro" onclick="doSkipIntro()">
+        Skip Intro <span id="intro-timer" style="font-variant-numeric:tabular-nums;">(5)</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 4l10 8-10 8V4z"/></svg>
+      </button>
+
+      <button class="skip-pill z-[5]" id="skip-outro" onclick="doSkipOutro()">
+        Skip Outro <span id="outro-timer" style="font-variant-numeric:tabular-nums;">(5)</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 4l10 8-10 8V4z"/></svg>
+      </button>
+
+      <div class="next-overlay z-[6]" id="next-overlay">
+        <div class="countdown-ring">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+            <circle class="prog" cx="50" cy="50" r="45" fill="none" stroke-width="3" stroke-linecap="round" id="next-circle"/>
+          </svg>
+          <div class="countdown-num" id="next-num">10</div>
+        </div>
+        <p class="mt-3 text-base font-bold">Next Episode</p>
+        <p class="text-xs text-white/40 mt-1" id="next-ep-name">Episode 2</p>
+        <div class="flex gap-2 mt-4">
+          <button class="act-btn" onclick="cancelNext()">Cancel</button>
+          <button class="act-btn save" onclick="playNextNow()">Play Now</button>
+        </div>
+      </div>
+
+      <div class="controls-layer absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/85 via-black/40 to-transparent z-[5] transition-opacity duration-300">
+        <div class="seek-wrap mb-3" id="seek-wrap">
+          <div class="seek-buffer" id="seek-buffer" style="width:0%"></div>
+          <div class="seek-fill" id="seek-fill" style="width:0%"></div>
+          <div class="seek-thumb" id="seek-thumb" style="left:0%"></div>
+        </div>
+        <div class="ctrl-bar">
+          <button id="small-play-btn" onclick="togglePlay()" class="ctrl-icon accent">
+            <svg id="spb-icon" width="18" height="18" viewBox="0 0 24 24" fill="black"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+          <button onclick="skipBack()" class="ctrl-icon" title="-10s (J)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20L9 12l10-8v16zM5 19h2V5H5v14z"/></svg>
+          </button>
+          <button onclick="skipFwd()" class="ctrl-icon" title="+10s (L)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4l10 8-10 8V4zM19 5h-2v14h2V5z"/></svg>
+          </button>
+          <div class="vol-wrap relative">
+            <button onclick="toggleMute()" class="ctrl-icon" id="mute-btn" title="Mute (M)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            </button>
+            <div class="vol-pop">
+              <input type="range" min="0" max="100" value="100" style="writing-mode: bt-lr; width: 4px; height: 60px; accent-color: var(--player-accent);" oninput="setVol(this.value)">
+            </div>
+          </div>
+          <span class="time-txt ml-1" id="time-current">0:00</span>
+          <span class="time-txt" style="opacity:0.35">/</span>
+          <span class="time-txt" id="time-total">24:00</span>
+          <div class="ml-auto flex items-center gap-1">
+            <div class="relative">
+              <button class="ctrl-icon" onclick="toggleDrop('drop-speed')" title="Speed"><span style="font-size:10px; font-weight:700;">1x</span></button>
+              <div class="drop-menu" id="drop-speed">
+                <div class="drop-item" onclick="setSpeed(0.5)">0.5x<span class="chk">&#10003;</span></div>
+                <div class="drop-item" onclick="setSpeed(0.75)">0.75x<span class="chk">&#10003;</span></div>
+                <div class="drop-item on" onclick="setSpeed(1)">1x<span class="chk">&#10003;</span></div>
+                <div class="drop-item" onclick="setSpeed(1.25)">1.25x<span class="chk">&#10003;</span></div>
+                <div class="drop-item" onclick="setSpeed(1.5)">1.5x<span class="chk">&#10003;</span></div>
+                <div class="drop-item" onclick="setSpeed(2)">2x<span class="chk">&#10003;</span></div>
+              </div>
+            </div>
+            <div class="relative">
+              <button class="ctrl-icon" onclick="toggleDrop('drop-quality')" title="Quality">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+              </button>
+              <div class="drop-menu" id="drop-quality">
+                <div class="drop-item" onclick="setQuality('4k')">4K<span class="chk">&#10003;</span></div>
+                <div class="drop-item on" onclick="setQuality('1080')">1080p<span class="chk">&#10003;</span></div>
+                <div class="drop-item" onclick="setQuality('720')">720p<span class="chk">&#10003;</span></div>
+                <div class="drop-item" onclick="setQuality('480')">480p<span class="chk">&#10003;</span></div>
+                <div class="drop-item" onclick="setQuality('360')">360p<span class="chk">&#10003;</span></div>
+                <div class="drop-item" onclick="setQuality('auto')">Auto<span class="chk">&#10003;</span></div>
+              </div>
+            </div>
+            <button class="ctrl-icon" onclick="toggleSubDub()" id="sd-btn" title="Sub/Dub (S)"><span style="font-size:10px; font-weight:700;">SUB</span></button>
+            <button class="ctrl-icon hidden sm:flex" onclick="toggleTheater()" title="Theater (T)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            </button>
+            <button class="ctrl-icon" onclick="toggleFull()" title="Fullscreen (F)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exit fullscreen button for iframe -->
+    <button id="iframe-exit-btn" onclick="exitIframeFullscreen()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle">
+        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+      </svg>
+      Exit
+    </button>
+
+    <div class="px-4 mb-5 fade-in stagger-2">
+      <h2 id="player-anime-title" class="text-lg font-bold mb-1">Episode 1</h2>
+      <div class="flex items-center gap-2 text-xs text-white/50 mb-2">
+        <span class="font-semibold" style="color:var(--player-accent)">HD</span>
+        <span>&#8226;</span>
+        <span id="sub-dub-badge">Subbed</span>
+        <span>&#8226;</span>
+        <span>24 min</span>
+        <span>&#8226;</span>
+        <span id="quality-badge">1080p</span>
+      </div>
+      <p class="text-sm text-white/60 leading-relaxed mb-3" id="anime-synopsis">Enjoy watching your favorite anime in high quality with subtitles.</p>
+      <div class="flex flex-wrap gap-2">
+        <button class="act-btn save" onclick="toggleSave()" id="save-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <span id="save-txt">Bookmark</span>
+        </button>
+        <button class="act-btn" onclick="shareIt()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Share
+        </button>
+        <button class="act-btn" onclick="downloadIt()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+        <button class="act-btn" onclick="castIt()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          Cast
+        </button>
+      </div>
+    </div>
+
+    <div class="px-4 mb-6 fade-in stagger-3">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="section-title">Episodes</h3>
+        <div class="relative">
+          <button class="season-btn" onclick="toggleSeasonDrop()">
+            <span id="season-label">Season 1</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="season-drop" id="season-drop"></div>
+        </div>
+      </div>
+      <div id="episodes-list" class="flex gap-3 overflow-x-auto hide-scrollbar pb-2"></div>
+    </div>
+
+    <div class="px-4 mb-6 fade-in stagger-4">
+      <h3 class="section-title mb-3">Next Up</h3>
+      <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2" id="next-up-container"></div>
+    </div>
+
+    <div class="px-4 mb-6 fade-in stagger-5">
+      <h3 class="section-title mb-3">Discussion <span class="text-white/25 text-xs font-normal ml-1">(128)</span></h3>
+      <div class="cmt-box">
+        <div class="flex gap-3">
+          <div class="cmt-avatar">U</div>
+          <div class="flex-1">
+            <textarea id="cmt-input" rows="2" placeholder="Add a comment..." class="cmt-input" onfocus="this.rows=3" onblur="if(!this.value)this.rows=2"></textarea>
+            <div class="flex justify-end mt-2">
+              <button class="act-btn save text-xs" onclick="postCmt()">Post</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="comments-list"></div>
+    </div>
+
+    <div class="px-4 mb-6 fade-in">
+      <h3 class="section-title mb-3">You May Also Like</h3>
+      <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3" id="related-grid"></div>
+    </div>
+  </div>
+
+  <div class="h-20"></div>
+
+  <nav class="bottom-nav glass-strong">
+    <div class="bottom-nav-inner">
+      <button class="nav-item" onclick="goToPage('home')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10"></path></svg>
+        <span class="text-[10px] font-medium">Home</span>
+      </button>
+      <button class="nav-item" onclick="goToPage('search')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <span class="text-[10px] font-medium">Search</span>
+      </button>
+      <button class="nav-item" onclick="goToPage('categories')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <span class="text-[10px] font-medium">Categories</span>
+      </button>
+      <button class="nav-item" onclick="goToPage('profile')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+        <span class="text-[10px] font-medium">Profile</span>
+      </button>
+    </div>
+  </nav>
+
+  <script src="../js/tmdb.js"></script>
+  <script src="../js/theme-helper.js"></script>
+  <script src="../js/app-core.js"></script>
+  <script src="../js/app-player.js"></script>
+</body>
+</html>

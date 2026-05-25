@@ -1,0 +1,40 @@
+/* CSS Variables & Theme */
+:root {
+  --accent: #00D4FF;
+  --accent-glow: rgba(0, 212, 255, 0.4);
+  --accent-secondary: #FF6600;
+
+  --bg-primary: #0B0B0F;
+  --bg-secondary: #12121A;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-hover: rgba(255, 255, 255, 0.08);
+
+  --border-card: rgba(255, 255, 255, 0.06);
+  --border-focus: rgba(0, 212, 255, 0.3);
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.35);
+  --text-inverse: #0B0B0F;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+  --shadow-accent: 0 0 20px var(--accent-glow);
+
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* ===== PLAYER VARIABLES (ADDED) ===== */
+    --player-accent: var(--accent);
+  --player-accent-light: var(--accent);
+  --player-bg: #0a0a0f;
+  --player-card: #12121a;
+
+}

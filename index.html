@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>THRILLING ANIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/animation.css">
+  <link rel="stylesheet" href="./css/themes.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at top, rgba(0,212,255,0.1), transparent 60%), var(--bg-primary);
+    }
+    .splash-logo {
+      animation: fadeInUp 0.8s ease-out, float 3s ease-in-out infinite 0.8s;
+    }
+    .splash-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="flex flex-col items-center gap-6 splash-logo">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-xl bg-accent flex items-center justify-center shadow-accent">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">THRILLING ANIME</h1>
+        <p class="text-xs text-white/50 tracking-widest uppercase">Stream Anime Free</p>
+      </div>
+    </div>
+    <div class="splash-spinner"></div>
+  </div>
+
+  <script>
+    // Redirect to home after splash
+    setTimeout(() => {
+      window.location.href = './pages/home.html';
+    }, 2000);
+
+
+
+  </script>
+  <script src="js/offline-indicator.js"></script>
+  <script src="js/haptic.js"></script>
+  <script src="js/page-transitions.js"></script>
+
+
+</body>
+</html>

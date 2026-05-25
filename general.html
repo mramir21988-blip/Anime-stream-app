@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>General - THRILLING ANIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animation.css">
+  <link rel="stylesheet" href="../css/profile-improvements.css">
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <header class="app-header glass-strong">
+    <div class="app-header-inner">
+      <div class="flex items-center gap-2">
+        <button class="p-2 rounded-xl hover:bg-white/5 transition-colors" onclick="haptic(); history.back()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <h1 class="text-lg font-bold tracking-tight">General</h1>
+      </div>
+    </div>
+  </header>
+
+  <div class="h-14"></div>
+
+  <div class="page-container px-4 pt-4 fade-in-up">
+    <div class="settings-group">
+      <!-- Auto Play -->
+      <div class="settings-item toggle-item">
+        <div class="settings-icon" style="--icon-color: #00D4FF;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        </div>
+        <div class="settings-info">
+          <div class="settings-title">Auto Play</div>
+          <div class="settings-subtitle">Play next episode automatically</div>
+        </div>
+        <label class="toggle-switch" onclick="haptic()">
+          <input type="checkbox" id="setting-autoplay" onchange="haptic(); saveSetting('autoplay', this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Video Quality -->
+      <div class="settings-item toggle-item">
+        <div class="settings-icon" style="--icon-color: #FFD700;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M12 20V4"/><path d="M3 20h6"/><path d="M3 20v-6"/><path d="M3 8V4h6v4"/><path d="M3 8h6"/></svg>
+        </div>
+        <div class="settings-info">
+          <div class="settings-title">Video Quality</div>
+          <div class="settings-subtitle">Preferred streaming quality</div>
+        </div>
+        <select id="setting-quality" class="settings-select" onchange="haptic(); saveSetting('quality', this.value)">
+          <option value="auto" class="bg-[#12121A]">Auto</option>
+          <option value="1080p" class="bg-[#12121A]">1080p</option>
+          <option value="720p" class="bg-[#12121A]">720p</option>
+          <option value="480p" class="bg-[#12121A]">480p</option>
+        </select>
+      </div>
+
+      <!-- Default Language -->
+      <div class="settings-item toggle-item">
+        <div class="settings-icon" style="--icon-color: #4ade80;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+        </div>
+        <div class="settings-info">
+          <div class="settings-title">Default Language</div>
+          <div class="settings-subtitle">Preferred audio language</div>
+        </div>
+        <select id="setting-lang" class="settings-select" onchange="haptic(); saveSetting('lang', this.value); showToast('Language updated')">
+          <option value="all" class="bg-[#12121A]">All</option>
+          <option value="hi" class="bg-[#12121A]">Hindi</option>
+          <option value="ja" class="bg-[#12121A]">Japanese</option>
+          <option value="en" class="bg-[#12121A]">English</option>
+        </select>
+      </div>
+
+      <!-- Notifications -->
+      <div class="settings-item toggle-item">
+        <div class="settings-icon" style="--icon-color: #FF3366;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <div class="settings-info">
+          <div class="settings-title">Notifications</div>
+          <div class="settings-subtitle">Get notified for new episodes</div>
+        </div>
+        <label class="toggle-switch" onclick="haptic()">
+          <input type="checkbox" id="setting-notifications" onchange="haptic(); saveSetting('notifications', this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Skip Intro -->
+      <div class="settings-item toggle-item">
+        <div class="settings-icon" style="--icon-color: #FF6600;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="settings-info">
+          <div class="settings-title">Skip Intro</div>
+          <div class="settings-subtitle">Auto skip anime intro</div>
+        </div>
+        <label class="toggle-switch" onclick="haptic()">
+          <input type="checkbox" id="setting-skipintro" onchange="haptic(); saveSetting('skip_intro', this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Haptic Feedback -->
+      <div class="settings-item toggle-item">
+        <div class="settings-icon" style="--icon-color: #FF6B00;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+            <path d="M12 18h.01"/>
+            <path d="M12 14a4 4 0 0 1 4-4"/>
+          </svg>
+        </div>
+        <div class="settings-info">
+          <div class="settings-title">Haptic Feedback</div>
+          <div class="settings-subtitle">Vibration on touch</div>
+        </div>
+        <label class="toggle-switch" onclick="haptic()">
+          <input type="checkbox" id="setting-haptic" onchange="saveHaptic(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="h-20"></div>
+
+  <script src="../js/theme-helper.js"></script>
+  <script src="../js/tmdb.js"></script>
+  <script src="../js/app-core.js"></script>
+  <script>
+    function haptic(pattern) {
+      const enabled = localStorage.getItem('thrilling_haptic');
+      if (enabled === 'false') return;
+      if (navigator.vibrate) navigator.vibrate(pattern || 10);
+    }
+
+    function saveSetting(key, value) {
+      localStorage.setItem('thrilling_' + key, value);
+      showToast(key.charAt(0).toUpperCase() + key.slice(1) + ' updated');
+    }
+
+    function saveHaptic(enabled) {
+      localStorage.setItem('thrilling_haptic', enabled);
+      showToast('Haptic ' + (enabled ? 'enabled' : 'disabled'));
+      if (enabled && navigator.vibrate) navigator.vibrate(15);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Default haptic ON if never set
+      if (localStorage.getItem('thrilling_haptic') === null) {
+        localStorage.setItem('thrilling_haptic', 'true');
+      }
+
+      const autoplay = localStorage.getItem('thrilling_autoplay');
+      const quality = localStorage.getItem('thrilling_quality');
+      const lang = localStorage.getItem('thrilling_lang');
+      const notifications = localStorage.getItem('thrilling_notifications');
+      const skipIntro = localStorage.getItem('thrilling_skip_intro');
+      const hapticSetting = localStorage.getItem('thrilling_haptic');
+
+      if (autoplay !== null) document.getElementById('setting-autoplay').checked = autoplay === 'true';
+      if (quality) document.getElementById('setting-quality').value = quality;
+      if (lang) document.getElementById('setting-lang').value = lang;
+      if (notifications !== null) document.getElementById('setting-notifications').checked = notifications === 'true';
+      if (skipIntro !== null) document.getElementById('setting-skipintro').checked = skipIntro === 'true';
+      if (hapticSetting !== null) document.getElementById('setting-haptic').checked = hapticSetting === 'true';
+    });
+  </script>
+</body>
+</html>

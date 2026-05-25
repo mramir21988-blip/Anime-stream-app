@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Profile - THRILLING ANIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animation.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/profile-improvements.css">
+
+  <style>
+    .wh-section { margin-bottom: 1.5rem; padding: 0 4px; }
+    .wh-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .wh-header-left { display:flex; align-items:center; gap:10px; }
+    .wh-icon-clock { width:20px; height:20px; color:#9ca3af; stroke-width:2; flex-shrink:0; }
+    .wh-header h2 { font-size:18px; font-weight:600; color:#fff; margin:0; letter-spacing:-0.3px; }
+    .wh-see-all { background:none; border:none; cursor:pointer; padding:4px; color:#9ca3af; transition:color 0.2s; display:flex; align-items:center; justify-content:center; }
+    .wh-see-all:hover { color:#fff; }
+    .wh-see-all svg { width:20px; height:20px; }
+    .wh-scroll { display:flex; gap:12px; overflow-x:auto; overflow-y:hidden; scroll-behavior:smooth; padding-bottom:12px; scrollbar-width:none; -ms-overflow-style:none; }
+    .wh-scroll::-webkit-scrollbar { display:none; }
+    .wh-card { flex:0 0 auto; width:152px; cursor:pointer; text-decoration:none; -webkit-tap-highlight-color:transparent; }
+    .wh-card:active { transform:scale(0.97); }
+    .wh-thumb-wrap { position:relative; width:100%; aspect-ratio:16/9; border-radius:10px; overflow:hidden; background:#1f1f2e; box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+    .wh-thumb-wrap img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.3s ease; }
+    .wh-card:hover .wh-thumb-wrap img { transform:scale(1.05); }
+    .wh-badge { position:absolute; top:6px; left:6px; width:22px; height:22px; background:rgba(255,255,255,0.95); border-radius:4px; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+    .wh-badge svg { width:12px; height:12px; color:#000; }
+    .wh-progress-track { position:absolute; bottom:0; left:0; right:0; height:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+    .wh-progress-fill { height:100%; background:linear-gradient(90deg,#00d4aa,#00a8e8); border-radius:0 2px 2px 0; transition:width 0.4s ease; box-shadow:0 0 6px rgba(0,212,170,0.4); }
+    .wh-title { margin:8px 0 0 0; font-size:13px; font-weight:500; color:#e5e7eb; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:0 2px; display:block; }
+    .wh-empty { flex:0 0 auto; width:100%; text-align:center; padding:32px 0; color:#6b7280; }
+    .wh-empty-icon { width:40px; height:40px; margin:0 auto 8px; opacity:0.3; color:#9ca3af; }
+    .wh-skeleton-card { flex:0 0 auto; width:152px; }
+    .wh-skeleton-thumb { width:100%; aspect-ratio:16/9; border-radius:10px; background:linear-gradient(90deg,rgba(255,255,255,0.03) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.03) 75%); background-size:200% 100%; animation:skeleton 1.5s infinite; }
+    .wh-skeleton-text { height:12px; width:80%; border-radius:4px; margin-top:8px; background:linear-gradient(90deg,rgba(255,255,255,0.03) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.03) 75%); background-size:200% 100%; animation:skeleton 1.5s infinite; }
+    .stat-skeleton { background:linear-gradient(90deg,rgba(255,255,255,0.03) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.03) 75%); background-size:200% 100%; animation:skeleton 1.5s infinite; border-radius:8px; color:transparent !important; pointer-events:none; }
+    .name-skeleton { background:linear-gradient(90deg,rgba(255,255,255,0.03) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.03) 75%); background-size:200% 100%; animation:skeleton 1.5s infinite; border-radius:4px; color:transparent !important; display:inline-block; width:80px; height:20px; }
+    .email-skeleton { background:linear-gradient(90deg,rgba(255,255,255,0.03) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.03) 75%); background-size:200% 100%; animation:skeleton 1.5s infinite; border-radius:4px; color:transparent !important; display:inline-block; width:140px; height:14px; margin-top:4px; }
+    @keyframes skeleton { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
+
+  </style>
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <header class="app-header glass-strong">
+    <div class="app-header-inner">
+      <div class="flex items-center gap-2">
+        <h1 class="text-lg font-bold tracking-tight">Profile</h1>
+      </div>
+      <button class="p-2 rounded-xl hover:bg-white/5 transition-colors" onclick="haptic(); goToPage('home')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="h-14"></div>
+
+  <div id="profile-page" class="page-container px-4 pt-4 fade-in-up" >
+    <!-- User Info -->
+    <div class="flex flex-col items-center gap-3 mb-6">
+      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-accent to-blue-600 flex items-center justify-center text-2xl font-bold text-black shadow-accent relative">
+        <span id="user-avatar">U</span>
+        <div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#1a1a2e] border-2 border-[#0B0B0F] flex items-center justify-center">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+      </div>
+      <div class="text-center">
+        <h2 id="user-name" class="text-lg font-bold name-skeleton">User</h2>
+        <p id="user-email" class="text-xs text-white/50 email-skeleton">user@example.com</p>
+      </div>
+      <button onclick="haptic(); goToPage('login')" class="btn-secondary text-xs px-4 py-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Switch Account
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-3 gap-3 mb-6" id="stats-grid">
+      <div class="stat-card" data-animate="true">
+        <div class="value stat-skeleton" id="stat-watched">0</div>
+        <div class="label">Watched</div>
+      </div>
+      <div class="stat-card" data-animate="true">
+        <div class="value stat-skeleton" id="stat-hours">0</div>
+        <div class="label">Hours</div>
+      </div>
+      <div class="stat-card" data-animate="true">
+        <div class="value stat-skeleton" id="stat-streak">0</div>
+        <div class="label">Day Streak</div>
+      </div>
+    </div>
+
+    <!-- Watch History Section -->
+    <section class="wh-section">
+      <div class="wh-header">
+        <div class="wh-header-left">
+          <svg class="wh-icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <h2>Watch History</h2>
+        </div>
+        <button class="wh-see-all" onclick="haptic(); navigateToHistory()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+      <div class="wh-scroll" id="watchHistoryContainer">
+        <div class="wh-skeleton-card"><div class="wh-skeleton-thumb"></div><div class="wh-skeleton-text"></div></div>
+        <div class="wh-skeleton-card"><div class="wh-skeleton-thumb"></div><div class="wh-skeleton-text"></div></div>
+        <div class="wh-skeleton-card"><div class="wh-skeleton-thumb"></div><div class="wh-skeleton-text"></div></div>
+        <div class="wh-skeleton-card"><div class="wh-skeleton-thumb"></div><div class="wh-skeleton-text"></div></div>
+      </div>
+    </section>
+
+    <!-- PREFERENCES -->
+    <div class="mb-6">
+      <h3 class="section-title mb-3">Preferences</h3>
+      <div class="settings-group">
+        <div class="settings-item" onclick="haptic(); showToast('Downloads coming soon')">
+          <div class="settings-icon" style="--icon-color: #00D4FF;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <div class="settings-info">
+            <div class="settings-title">Downloads</div>
+            <div class="settings-subtitle">Manage downloaded content</div>
+          </div>
+          <svg class="settings-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="settings-item" onclick="haptic(); showToast('Sponsor link coming soon')">
+          <div class="settings-icon" style="--icon-color: #FF3366;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <div class="settings-info">
+            <div class="settings-title">Sponsor me</div>
+            <div class="settings-subtitle">Support development</div>
+          </div>
+          <svg class="settings-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOOLS -->
+    <div class="mb-6">
+      <h3 class="section-title mb-3">Tools</h3>
+      <div class="settings-group">
+        <div class="settings-item" onclick="haptic(); goToPage('help')">
+          <div class="settings-icon" style="--icon-color: #FF6600;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <div class="settings-info">
+            <div class="settings-title">User Guide</div>
+            <div class="settings-subtitle">Learn how to use the app</div>
+          </div>
+          <svg class="settings-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="settings-item" onclick="haptic(); showToast('Desi Serials coming soon')">
+          <div class="settings-icon" style="--icon-color: #FF3366;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="settings-info">
+            <div class="settings-title">Desi Serials</div>
+            <div class="settings-subtitle">Watch latest desi serials & shows</div>
+          </div>
+          <svg class="settings-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="settings-item" onclick="haptic(); goToPage('help')">
+          <div class="settings-icon" style="--icon-color: #00D4FF;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="settings-info">
+            <div class="settings-title">Help Center</div>
+            <div class="settings-subtitle">Get help and support</div>
+          </div>
+          <svg class="settings-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="settings-item" onclick="haptic(); goToPage('general')">
+          <div class="settings-icon" style="--icon-color: #FFD700;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <div class="settings-info">
+            <div class="settings-title">General</div>
+            <div class="settings-subtitle">General settings and options</div>
+          </div>
+          <svg class="settings-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="settings-item" onclick="haptic(); goToPage('appearance')">
+          <div class="settings-icon" style="--icon-color: #b829dd;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </div>
+          <div class="settings-info">
+            <div class="settings-title">Appearance</div>
+            <div class="settings-subtitle">Customize your app theme</div>
+          </div>
+          <svg class="settings-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="settings-item" onclick="haptic(); showToast('Android TV & Linux coming soon')">
+          <div class="settings-icon" style="--icon-color: #4ade80;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="settings-info">
+            <div class="settings-title">Android TV & Linux</div>
+            <div class="settings-subtitle">Available for TV and Desktop</div>
+          </div>
+          <svg class="settings-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="settings-item" onclick="haptic(); window.open('https://t.me/thrillinganime','_blank')">
+          <div class="settings-icon" style="--icon-color: #00D4FF;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </div>
+          <div class="settings-info">
+            <div class="settings-title">Join Telegram</div>
+            <div class="settings-subtitle">Get Help By Joining</div>
+          </div>
+          <svg class="settings-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="mb-6">
+      <h3 class="section-title mb-3">About</h3>
+      <div class="settings-group">
+        <div class="settings-item" onclick="haptic(); goToPage('about')">
+          <div class="settings-icon" style="--icon-color: #FF6600;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </div>
+          <div class="settings-info">
+            <div class="settings-title">About App</div>
+            <div class="settings-subtitle">Version and information</div>
+          </div>
+          <span class="settings-value">v1.0.0</span>
+          <svg class="settings-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="settings-item" onclick="haptic(); goToPage('dmca')">
+          <div class="settings-icon" style="--icon-color: #FFD700;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="settings-info">
+            <div class="settings-title">DMCA & Legal</div>
+            <div class="settings-subtitle">Copyright and legal information</div>
+          </div>
+          <svg class="settings-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout -->
+    <button onclick="haptic(); logout()" class="w-full btn-secondary text-red-400 border-red-400/30 hover:bg-red-400/10 mb-8">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      Logout
+    </button>
+  </div>
+
+  <div class="h-20"></div>
+
+  <nav class="bottom-nav glass-strong">
+    <div class="bottom-nav-inner">
+      <button class="nav-item" data-page="home" onclick="haptic(); goToPage('home')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Home</span>
+      </button>
+      <button class="nav-item" data-page="search" onclick="haptic(); goToPage('search')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Search</span>
+      </button>
+      <button class="nav-item" data-page="categories" onclick="haptic(); goToPage('categories')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Categories</span>
+      </button>
+      <button class="nav-item active" data-page="profile" onclick="haptic(); goToPage('profile')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Profile</span>
+      </button>
+    </div>
+  </nav>
+
+  <script src="../js/theme-helper.js"></script>
+  <script src="../js/tmdb.js"></script>
+  <script src="../js/app-core.js"></script>
+  <script src="../js/app-profile.js"></script>
+  <script>
+    function haptic(pattern) {
+      const enabled = localStorage.getItem('thrilling_haptic');
+      if (enabled === 'false') return;
+      if (navigator.vibrate) navigator.vibrate(pattern || 10);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('thrilling_user') || '{"name":"Guest","email":"guest@local"}');
+      document.getElementById('user-name').textContent = user.name || 'Guest';
+      document.getElementById('user-email').textContent = user.email || 'guest@local';
+      document.getElementById('user-avatar').textContent = (user.name || 'G').charAt(0).toUpperCase();
+
+    });
+  </script>
+  <script src="../js/watch-streak.js"></script>
+  <div id="streak-widget"></div>
+</body>
+</html>

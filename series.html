@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Series - THRILLING ANIME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animation.css">
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <!-- Header -->
+  <header class="app-header glass-strong">
+    <div class="app-header-inner">
+      <button class="p-2 rounded-xl hover:bg-white/5 transition-colors mr-2" onclick="history.back()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+      <h1 class="text-lg font-bold tracking-tight">Series Details</h1>
+      <button class="p-2 rounded-xl hover:bg-white/5 transition-colors" onclick="goToPage('home')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="h-14"></div>
+
+  <div id="series-content" class="page-container fade-in-up">
+    <!-- Backdrop -->
+    <div class="relative w-full h-64 mb-4">
+      <img id="series-backdrop" src="https://placehold.co/640x360/0B0B0F/333333?text=Loading..." alt="Backdrop" class="w-full h-full object-cover rounded-xl">
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-transparent to-transparent rounded-xl"></div>
+      <button onclick="goToPage('player')" class="absolute bottom-4 left-4 btn-primary text-sm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Watch Now
+      </button>
+    </div>
+
+    <!-- Info -->
+    <div class="px-4 mb-6">
+      <h2 id="series-title" class="text-xl font-bold mb-2">Loading...</h2>
+      <div class="flex items-center gap-3 text-xs text-white/50 mb-3">
+        <span id="series-rating" class="text-accent font-semibold">8.5</span>
+        <span id="series-year">2024</span>
+        <span id="series-genre">Action</span>
+        <span id="series-eps">24 Episodes</span>
+      </div>
+      <p id="series-desc" class="text-sm text-white/60 leading-relaxed">Loading description...</p>
+    </div>
+
+    <!-- Episodes -->
+    <div class="px-4 mb-6">
+      <h3 class="section-title mb-3">Episodes</h3>
+      <div id="episodes-list" class="flex flex-col gap-2">
+        <div class="skeleton w-full h-16 rounded-xl"></div>
+        <div class="skeleton w-full h-16 rounded-xl"></div>
+        <div class="skeleton w-full h-16 rounded-xl"></div>
+      </div>
+    </div>
+
+    <!-- Similar -->
+    <div class="px-4 mb-6">
+      <h3 class="section-title mb-3">More Like This</h3>
+      <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2" id="similar-container">
+        <div class="flex-shrink-0 w-32">
+          <div class="skeleton w-full mb-2" style="aspect-ratio: 3/4;"></div>
+          <div class="skeleton-text w-20 h-3"></div>
+        </div>
+        <div class="flex-shrink-0 w-32">
+          <div class="skeleton w-full mb-2" style="aspect-ratio: 3/4;"></div>
+          <div class="skeleton-text w-20 h-3"></div>
+        </div>
+        <div class="flex-shrink-0 w-32">
+          <div class="skeleton w-full mb-2" style="aspect-ratio: 3/4;"></div>
+          <div class="skeleton-text w-20 h-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spacer -->
+  <div class="h-20"></div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav glass-strong">
+    <div class="bottom-nav-inner">
+      <button class="nav-item" onclick="goToPage('home')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Home</span>
+      </button>
+      <button class="nav-item" onclick="goToPage('search')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Search</span>
+      </button>
+      <button class="nav-item" onclick="goToPage('categories')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Categories</span>
+      </button>
+      <button class="nav-item" onclick="goToPage('profile')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path>
+        </svg>
+        <span class="text-[10px] font-medium">Profile</span>
+      </button>
+    </div>
+  </nav>
+
+  <script src="../js/tmdb.js"></script>
+  <script src="../js/app-core.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id') || '1';
+      const genre = urlParams.get('genre') || 'Action';
+
+      try {
+        // Load series details
+        const details = await fetchAnimeDetails(id);
+        document.getElementById('series-title').textContent = details.name || details.title || 'Unknown';
+        document.getElementById('series-desc').textContent = details.overview || 'No description available.';
+        document.getElementById('series-rating').textContent = (details.vote_average || 8.0).toFixed(1);
+        document.getElementById('series-year').textContent = (details.first_air_date || '2024').split('-')[0];
+        document.getElementById('series-genre').textContent = details.genres?.[0]?.name || genre;
+        document.getElementById('series-eps').textContent = `${details.number_of_episodes || 24} Episodes`;
+
+        if (details.backdrop_path) {
+          document.getElementById('series-backdrop').src = getBackdropUrl(details.backdrop_path, 'w780');
+        }
+
+        // Generate episodes
+        const epsContainer = document.getElementById('episodes-list');
+        epsContainer.innerHTML = '';
+        const epCount = Math.min(details.number_of_episodes || 12, 12);
+        for (let i = 1; i <= epCount; i++) {
+          const ep = document.createElement('div');
+          ep.className = 'flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer card-tap hover:bg-white/10 transition-colors';
+          ep.onclick = () => window.location.href = `./player.html?id=${id}&ep=${i}`;
+          ep.innerHTML = `
+            <div class="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center text-accent font-bold text-sm">${i}</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm">Episode ${i}</div>
+              <div class="text-xs text-white/40">24 min</div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/30">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          `;
+          epsContainer.appendChild(ep);
+        }
+
+        // Load similar
+        const similar = await fetchAnimeList('popular');
+        const simContainer = document.getElementById('similar-container');
+        simContainer.innerHTML = '';
+        similar.slice(0, 6).forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'anime-card card-tap';
+          card.onclick = () => window.location.href = `./series.html?id=${item.id}`;
+          card.innerHTML = `
+            <div class="poster">
+              <img src="${getImageUrl(item.poster)}" alt="${item.title}" loading="lazy">
+            </div>
+            <div class="title line-clamp-1">${item.title}</div>
+          `;
+          simContainer.appendChild(card);
+        });
+      } catch (e) {
+        console.error('Series load error:', e);
+      }
+    });
+  </script>
+   <script src="../js/manga-reader.js"></script>
+
+</body>
+</html>
